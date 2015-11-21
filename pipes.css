@@ -1,0 +1,23 @@
+@font-face {
+    font-family: EBGaramond;
+    src: url(fonts/eb-garamond/EBGaramond12-Regular.ttf);
+}
+@font-face {
+    font-family: Martel;
+    src: url(fonts/Martel/Martel-DemiBold.ttf);
+}
+
+#title , #subtitle {
+	font-family: Martel;
+	text-align: center;
+}
+#pipe {
+	border-top: black;
+	border-bottom: black;
+	border: 2px;
+	width: fill;
+	height: 500px;
+	display: block;
+/*	background-color: #7FDBFF;
+*/}
+
