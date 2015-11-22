@@ -181,6 +181,7 @@ main(void)
 	char cmd[40];
 	unsigned char length;
 	volatile unsigned int count = 0;
+	float inches = 0;
 #endif
 #if defined(PB_KEY)
 	unsigned char buttonPressed;
@@ -261,9 +262,9 @@ main(void)
 //				if(GPIO_getInputPinValue(GPIO_PORT_P6,GPIO_PIN5) == GPIO_INPUT_PIN_HIGH )
 //					break;
 //			}
-
+			inches = count / 35.0;
 			__delay_cycles(24000000);
-			printf("This is my time: %d\n", count);
+			printf("Distance is %f inches: \n", inches);
 
 #if defined(AT_CMD)
 		// Detect Carriage Return in the string
@@ -284,8 +285,10 @@ main(void)
 #if defined(PB_KEY)
 		buttonPressed = bspKeyPushed(BSP_KEY_ALL);
 
-//		if(count < 400)
-//			buttonPressed = ;// 0x8 or 0x10
+		if(inches < 5) {
+			SfxSendFrame(message, sizeof(message), NULL, NULL);
+		}
+
 
 		// Detect button push to send the message
 		if((buttonPressed == BSP_KEY_SELECT) || (buttonPressed == BSP_KEY_UP))
