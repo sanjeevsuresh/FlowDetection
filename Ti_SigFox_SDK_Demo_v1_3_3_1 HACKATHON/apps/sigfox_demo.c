@@ -181,7 +181,7 @@ main(void)
 	char cmd[40];
 	unsigned char length;
 	volatile unsigned int count = 0;
-	float inches = 0;
+	volatile unsigned int inches = 0;
 #endif
 #if defined(PB_KEY)
 	unsigned char buttonPressed;
@@ -213,58 +213,41 @@ main(void)
 
 		count = 0;
 		//Set P1.0 to output direction
-		    GPIO_setAsOutputPin(
-		        GPIO_PORT_P6,
-		        GPIO_PIN5
-		        );
-		    GPIO_setOutputLowOnPin(
-		    		GPIO_PORT_P6,
-		    		GPIO_PIN5
-		    	);
-		    __delay_cycles(48);
-		    GPIO_setOutputHighOnPin(
-		    		GPIO_PORT_P6,
-				GPIO_PIN5
-			);
-		    __delay_cycles(120);
-			GPIO_setOutputLowOnPin(
-					GPIO_PORT_P6,
-					GPIO_PIN5
-			);
+		GPIO_setAsOutputPin(GPIO_PORT_P6,GPIO_PIN5);
+		GPIO_setOutputLowOnPin(GPIO_PORT_P6,GPIO_PIN5);
+		__delay_cycles(48);
+		GPIO_setOutputHighOnPin(GPIO_PORT_P6, GPIO_PIN5);
+		__delay_cycles(120);
+		GPIO_setOutputLowOnPin(GPIO_PORT_P6,GPIO_PIN5);
+		GPIO_setAsInputPin(GPIO_PORT_P6,GPIO_PIN5);
 
-			GPIO_setAsInputPin(
-					GPIO_PORT_P6,
-					GPIO_PIN5
-			);
+		while(GPIO_getInputPinValue(GPIO_PORT_P6,GPIO_PIN5) == GPIO_INPUT_PIN_HIGH)
+		{
+		}
 
-			while(GPIO_getInputPinValue(GPIO_PORT_P6,GPIO_PIN5) == GPIO_INPUT_PIN_HIGH)
-			{
+		while(GPIO_getInputPinValue(GPIO_PORT_P6,GPIO_PIN5) == GPIO_INPUT_PIN_LOW)
+		{
 
+		}
+
+		while(GPIO_getInputPinValue(GPIO_PORT_P6,GPIO_PIN5) == GPIO_INPUT_PIN_HIGH)
+		{
+			count++;
+			if (count > 1000000) {
+				break;
 			}
+		}
 
-			while(GPIO_getInputPinValue(GPIO_PORT_P6,GPIO_PIN5) == GPIO_INPUT_PIN_LOW)
-			{
+		inches = (int) count / 35.0;
+		__delay_cycles(24000000);
+		printf("Distance is %d inches and ", inches);
+		printf("Hex is %0x \n", inches & 0xff);
+		if (inches < 6) {
+			//uint8 12 of them?
+			int i = 0;
+			message[0] = inches & 0xff;
+		}
 
-			}
-
-			while(GPIO_getInputPinValue(GPIO_PORT_P6,GPIO_PIN5) == GPIO_INPUT_PIN_HIGH)
-			{
-				count++;
-				if (count > 1000000) {
-					break;
-				}
-			}
-//			while(1) {
-//				count++;
-//				if (count > 10000) {
-//					break;
-//				}
-//				if(GPIO_getInputPinValue(GPIO_PORT_P6,GPIO_PIN5) == GPIO_INPUT_PIN_HIGH )
-//					break;
-//			}
-			inches = count / 35.0;
-			__delay_cycles(24000000);
-			printf("Distance is %f inches: \n", inches);
 
 #if defined(AT_CMD)
 		// Detect Carriage Return in the string
@@ -286,7 +269,7 @@ main(void)
 		buttonPressed = bspKeyPushed(BSP_KEY_ALL);
 
 		if(inches < 5) {
-			SfxSendFrame(message, sizeof(message), NULL, NULL);
+			SfxSendFrame(message, 1, NULL, NULL);
 		}
 
 
